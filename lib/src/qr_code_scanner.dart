@@ -140,11 +140,12 @@ class _QRViewState extends State<QRView> {
               },
               child: Text('Scan'),
             ),
+            Spacer(),
             FlatButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cancel', style: TextStyle(color: Colors.red)),
+              child: Text('Cancel', style: TextStyle(color: Colors.yellow)),
             ),
           ],
         )
