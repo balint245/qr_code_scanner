@@ -123,36 +123,53 @@ class _QRViewState extends State<QRView> {
             ],
           ),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Spacer(flex: 3),
-            FlatButton(
-              onPressed: () async {
-                try {
-                  final controller = QRViewController._(_channel, widget.key,
-                      widget.onPermissionSet, widget.cameraFacing);
-                  await controller._startSingleScan(
-                      widget.key, widget.overlay, widget.formatsAllowed);
+        Expanded(
+          flex: 1,
+          child: Row(
+            children: [
+              Spacer(
+                flex: 3,
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 10),
+                child: FlatButton(
+                  height: double.infinity,
+                  minWidth: 100,
+                  onPressed: () async {
+                    try {
+                      final controller = QRViewController._(
+                          _channel,
+                          widget.key,
+                          widget.onPermissionSet,
+                          widget.cameraFacing);
+                      await controller._startSingleScan(
+                          widget.key, widget.overlay, widget.formatsAllowed);
 
-                  // Initialize the controller for controlling the QRView
-                  if (widget.onQRViewCreated != null) {
-                    widget.onQRViewCreated(controller);
-                  }
-                } on PlatformException catch (e) {
-                  throw CameraException(e.code, e.message);
-                }
-              },
-              child: Text('Scan'),
-            ),
-            Spacer(),
-            FlatButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('Cancel', style: TextStyle(color: Colors.red)),
-            ),
-          ],
+                      // Initialize the controller for controlling the QRView
+                      if (widget.onQRViewCreated != null) {
+                        widget.onQRViewCreated(controller);
+                      }
+                    } on PlatformException catch (e) {
+                      throw CameraException(e.code, e.message);
+                    }
+                  },
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18),
+                      side: BorderSide(color: Colors.grey)),
+                  color: Colors.grey,
+                  child: Text('Scan', style: TextStyle(color: Colors.white)),
+                ),
+              ),
+              Spacer(),
+              FlatButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child:
+                    Text('Cancel', style: TextStyle(color: Colors.redAccent)),
+              )
+            ],
+          ),
         )
       ],
     );
