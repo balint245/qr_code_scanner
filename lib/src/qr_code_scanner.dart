@@ -135,22 +135,18 @@ class _QRViewState extends State<QRView> {
                 child: FlatButton(
                   height: double.infinity,
                   minWidth: 100,
-                  onPressed: () async {
-                    try {
-                      final controller = QRViewController._(
-                          _channel,
-                          widget.key,
-                          widget.onPermissionSet,
-                          widget.cameraFacing);
-                      await controller._startScan(
-                          widget.key, widget.overlay, widget.formatsAllowed);
-
+                  onPressed: () {
+                    // Start scan after creation of the view
+                    var controller;
+                    if (!widget.singleScan) {
+                      controller = QRViewController._(_channel, widget.key,
+                          widget.onPermissionSet, widget.cameraFacing)
+                        .._startSingleScan(
+                            widget.key, widget.overlay, widget.formatsAllowed);
                       // Initialize the controller for controlling the QRView
                       if (widget.onQRViewCreated != null) {
                         widget.onQRViewCreated(controller);
                       }
-                    } on PlatformException catch (e) {
-                      throw CameraException(e.code, e.message);
                     }
                   },
                   shape: RoundedRectangleBorder(
