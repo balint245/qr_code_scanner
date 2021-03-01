@@ -214,7 +214,7 @@ class QRView(messenger: BinaryMessenger, id: Int, private val params: HashMap<St
         return barcodeView
     }
 
-    private fun startSingleScan(arguments: List<Int>?, result, MethodChannel.Result) {
+    private fun startSingleScan(arguments: List<Int>?, result: MethodChannel.Result) {
         val allowedBarcodeTypes = mutableListOf<BarcodeFormat>()
         try {
             arguments?.forEach {
