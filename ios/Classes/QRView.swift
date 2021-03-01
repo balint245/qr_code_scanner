@@ -179,6 +179,7 @@ public class QRView:NSObject,FlutterPlatformView {
                 result(error)
             }
         })
+    }
     
     func startScan(_ arguments: Array<Int>, _ result: @escaping FlutterResult) {
         // Check for allowed barcodes
