@@ -65,6 +65,8 @@ class _QRViewState extends State<QRView> {
   var _channel;
   var _observer;
 
+  bool _startScan = false;
+
   @override
   void initState() {
     super.initState();
@@ -125,7 +127,9 @@ class _QRViewState extends State<QRView> {
         ),
         FlatButton(
           onPressed: () {
-            print('anyád picsáját szopkodd ki kis buzi rohadék');
+            setState(() {
+              _startScan = true;
+            });
           },
           child: Text('Scan'),
         )
@@ -171,9 +175,14 @@ class _QRViewState extends State<QRView> {
           _channel, widget.key, widget.onPermissionSet, widget.cameraFacing)
         .._startScan(widget.key, widget.overlay, widget.formatsAllowed);
     } else {
-      controller = QRViewController._(
-          _channel, widget.key, widget.onPermissionSet, widget.cameraFacing)
-        .._startSingleScan(widget.key, widget.overlay, widget.formatsAllowed);
+      if (_startScan) {
+        controller = QRViewController._(
+            _channel, widget.key, widget.onPermissionSet, widget.cameraFacing)
+          .._startSingleScan(widget.key, widget.overlay, widget.formatsAllowed);
+        setState(() {
+          _startScan = false;
+        });
+      }
     }
 
     // Initialize the controller for controlling the QRView
