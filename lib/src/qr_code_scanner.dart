@@ -145,7 +145,7 @@ class _QRViewState extends State<QRView> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cancel', style: TextStyle(color: Colors.yellow)),
+              child: Text('Cancel', style: TextStyle(color: Colors.red)),
             ),
           ],
         )
