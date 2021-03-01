@@ -174,20 +174,23 @@ class _QRViewState extends State<QRView> {
       controller = QRViewController._(
           _channel, widget.key, widget.onPermissionSet, widget.cameraFacing)
         .._startScan(widget.key, widget.overlay, widget.formatsAllowed);
+      // Initialize the controller for controlling the QRView
+      if (widget.onQRViewCreated != null) {
+        widget.onQRViewCreated(controller);
+      }
     } else {
       if (_startScan) {
         controller = QRViewController._(
             _channel, widget.key, widget.onPermissionSet, widget.cameraFacing)
           .._startSingleScan(widget.key, widget.overlay, widget.formatsAllowed);
+        // Initialize the controller for controlling the QRView
+        if (widget.onQRViewCreated != null) {
+          widget.onQRViewCreated(controller);
+        }
         setState(() {
           _startScan = false;
         });
       }
-    }
-
-    // Initialize the controller for controlling the QRView
-    if (widget.onQRViewCreated != null) {
-      widget.onQRViewCreated(controller);
     }
   }
 }
