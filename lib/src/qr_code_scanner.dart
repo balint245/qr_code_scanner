@@ -125,7 +125,7 @@ class _QRViewState extends State<QRView> {
         ),
         FlatButton(
           onPressed: () {
-            print('anyád picsáját szopkodd ki kis buzi');
+            print('anyád picsáját szopkodd ki kis buzi rohadék');
           },
           child: Text('Scan'),
         )
