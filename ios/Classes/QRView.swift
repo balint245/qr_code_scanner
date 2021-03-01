@@ -60,6 +60,8 @@ public class QRView:NSObject,FlutterPlatformView {
                                         scanAreaOffset: arguments["scanAreaOffset"] ?? 0)
                 case "startScan":
                     self?.startScan(call.arguments as! Array<Int>, result)
+                case "startSingleScan":
+                    self?.startSingleScan(call.arguments as! Array<Int>, result)
                 case "flipCamera":
                     self?.flipCamera(result)
                 case "toggleFlash":

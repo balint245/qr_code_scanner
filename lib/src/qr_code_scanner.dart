@@ -65,8 +65,6 @@ class _QRViewState extends State<QRView> {
   var _channel;
   var _observer;
 
-  bool _startScan = false;
-
   @override
   void initState() {
     super.initState();
@@ -125,19 +123,29 @@ class _QRViewState extends State<QRView> {
             ],
           ),
         ),
-        FlatButton(
-          onPressed: () {
-            print("Punci");
-            final controller = QRViewController._(_channel, widget.key,
-                widget.onPermissionSet, widget.cameraFacing)
-              .._startSingleScan(
-                  widget.key, widget.overlay, widget.formatsAllowed);
-            // Initialize the controller for controlling the QRView
-            if (widget.onQRViewCreated != null) {
-              widget.onQRViewCreated(controller);
-            }
-          },
-          child: Text('Scan'),
+        Row(
+          children: [
+            Spacer(),
+            FlatButton(
+              onPressed: () {
+                final controller = QRViewController._(_channel, widget.key,
+                    widget.onPermissionSet, widget.cameraFacing)
+                  .._startScan(
+                      widget.key, widget.overlay, widget.formatsAllowed);
+                // Initialize the controller for controlling the QRView
+                if (widget.onQRViewCreated != null) {
+                  widget.onQRViewCreated(controller);
+                }
+              },
+              child: Text('Scan'),
+            ),
+            FlatButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel', style: TextStyle(color: Colors.red)),
+            ),
+          ],
         )
       ],
     );
@@ -183,20 +191,6 @@ class _QRViewState extends State<QRView> {
       // Initialize the controller for controlling the QRView
       if (widget.onQRViewCreated != null) {
         widget.onQRViewCreated(controller);
-      }
-    } else {
-      print(_startScan);
-      if (_startScan) {
-        controller = QRViewController._(
-            _channel, widget.key, widget.onPermissionSet, widget.cameraFacing)
-          .._startSingleScan(widget.key, widget.overlay, widget.formatsAllowed);
-        // Initialize the controller for controlling the QRView
-        if (widget.onQRViewCreated != null) {
-          widget.onQRViewCreated(controller);
-        }
-        setState(() {
-          _startScan = false;
-        });
       }
     }
   }
