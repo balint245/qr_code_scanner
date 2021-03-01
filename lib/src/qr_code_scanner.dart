@@ -128,14 +128,19 @@ class _QRViewState extends State<QRView> {
           children: [
             Spacer(flex: 3),
             FlatButton(
-              onPressed: () {
-                final controller = QRViewController._(_channel, widget.key,
-                    widget.onPermissionSet, widget.cameraFacing)
-                  .._startSingleScan(
+              onPressed: () async {
+                try {
+                  final controller = QRViewController._(_channel, widget.key,
+                      widget.onPermissionSet, widget.cameraFacing);
+                  await controller._startSingleScan(
                       widget.key, widget.overlay, widget.formatsAllowed);
-                // Initialize the controller for controlling the QRView
-                if (widget.onQRViewCreated != null) {
-                  widget.onQRViewCreated(controller);
+
+                  // Initialize the controller for controlling the QRView
+                  if (widget.onQRViewCreated != null) {
+                    widget.onQRViewCreated(controller);
+                  }
+                } on PlatformException catch (e) {
+                  throw CameraException(e.code, e.message);
                 }
               },
               child: Text('Scan'),
