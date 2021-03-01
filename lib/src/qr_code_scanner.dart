@@ -124,9 +124,9 @@ class _QRViewState extends State<QRView> {
           ),
         ),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Spacer(),
+            Spacer(flex: 3),
             FlatButton(
               onPressed: () {
                 final controller = QRViewController._(_channel, widget.key,
