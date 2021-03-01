@@ -19,15 +19,16 @@ typedef PermissionSetCallback = void Function(QRViewController, bool);
 /// The [QRView] is the view where the camera
 /// and the barcode scanner gets displayed.
 class QRView extends StatefulWidget {
-  const QRView({
-    @required Key key,
-    @required this.onQRViewCreated,
-    this.overlay,
-    this.overlayMargin = EdgeInsets.zero,
-    this.cameraFacing = CameraFacing.back,
-    this.onPermissionSet,
-    this.formatsAllowed,
-  })  : assert(key != null),
+  const QRView(
+      {@required Key key,
+      @required this.onQRViewCreated,
+      this.overlay,
+      this.overlayMargin = EdgeInsets.zero,
+      this.cameraFacing = CameraFacing.back,
+      this.onPermissionSet,
+      this.formatsAllowed,
+      this.singleScan = false})
+      : assert(key != null),
         assert(onQRViewCreated != null),
         super(key: key);
 
@@ -52,6 +53,9 @@ class QRView extends StatefulWidget {
 
   /// Use [formatsAllowed] to specify which formats needs to be scanned.
   final List<BarcodeFormat> formatsAllowed;
+
+  /// Set [singleScan] to true, if you would like to scan a single barcode with a button
+  final bool singleScan;
 
   @override
   State<StatefulWidget> createState() => _QRViewState();
@@ -121,7 +125,7 @@ class _QRViewState extends State<QRView> {
         ),
         FlatButton(
           onPressed: () {
-            print('kaka');
+            print('anyád picsája');
           },
           child: Text('Scan'),
         )
@@ -161,9 +165,16 @@ class _QRViewState extends State<QRView> {
     _channel = MethodChannel('net.touchcapture.qr.flutterqr/qrview_$id');
 
     // Start scan after creation of the view
-    final controller = QRViewController._(
-        _channel, widget.key, widget.onPermissionSet, widget.cameraFacing)
-      .._startScan(widget.key, widget.overlay, widget.formatsAllowed);
+    var controller;
+    if (!widget.singleScan) {
+      controller = QRViewController._(
+          _channel, widget.key, widget.onPermissionSet, widget.cameraFacing)
+        .._startScan(widget.key, widget.overlay, widget.formatsAllowed);
+    } else {
+      controller = QRViewController._(
+          _channel, widget.key, widget.onPermissionSet, widget.cameraFacing)
+        .._startSingleScan(widget.key, widget.overlay, widget.formatsAllowed);
+    }
 
     // Initialize the controller for controlling the QRView
     if (widget.onQRViewCreated != null) {
@@ -247,6 +258,19 @@ class QRViewController {
       await QRViewController.updateDimensions(key, _channel, overlay: overlay);
       return await _channel.invokeMethod(
           'startScan', barcodeFormats?.map((e) => e.asInt())?.toList() ?? []);
+    } on PlatformException catch (e) {
+      throw CameraException(e.code, e.message);
+    }
+  }
+
+  /// Starts the camera and scans a single barcode on button click
+  Future<void> _startSingleScan(GlobalKey key, QrScannerOverlayShape overlay,
+      List<BarcodeFormat> barcodeFormats) async {
+    // We need to update the dimension before the scan is started.
+    try {
+      await QRViewController.updateDimensions(key, _channel, overlay: overlay);
+      return await _channel.invokeMethod('startSingleScan',
+          barcodeFormats?.map((e) => e.asInt())?.toList() ?? []);
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
     }
