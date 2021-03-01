@@ -179,6 +179,7 @@ class _QRViewState extends State<QRView> {
         widget.onQRViewCreated(controller);
       }
     } else {
+      print(_startScan);
       if (_startScan) {
         controller = QRViewController._(
             _channel, widget.key, widget.onPermissionSet, widget.cameraFacing)
