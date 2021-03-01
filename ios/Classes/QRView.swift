@@ -120,6 +120,65 @@ public class QRView:NSObject,FlutterPlatformView {
         return result(width)
         
     }
+
+    func startSingleScan(_ arguments: Array<Int>, _ result: @escaping FlutterResult) {
+        // Check for allowed barcodes
+        var allowedBarcodeTypes: Array<AVMetadataObject.ObjectType> = []
+        arguments.forEach { arg in
+            allowedBarcodeTypes.append( QRCodeTypes[arg]!)
+        }
+        MTBBarcodeScanner.requestCameraPermission(success: { permissionGranted in
+            if permissionGranted {
+                do {
+                    try self.scanner?.startScanning(with: self.cameraFacing, resultBlock: { [weak self] codes in
+                        if let codes = codes {
+                            for code in codes {
+                                var typeString: String;
+                                switch(code.type) {
+                                    case AVMetadataObject.ObjectType.aztec:
+                                       typeString = "AZTEC"
+                                    case AVMetadataObject.ObjectType.code39:
+                                        typeString = "CODE_39"
+                                    case AVMetadataObject.ObjectType.code93:
+                                        typeString = "CODE_93"
+                                    case AVMetadataObject.ObjectType.code128:
+                                        typeString = "CODE_128"
+                                    case AVMetadataObject.ObjectType.dataMatrix:
+                                        typeString = "DATA_MATRIX"
+                                    case AVMetadataObject.ObjectType.ean8:
+                                        typeString = "EAN_8"
+                                    case AVMetadataObject.ObjectType.ean13:
+                                        typeString = "EAN_13"
+                                    case AVMetadataObject.ObjectType.itf14:
+                                        typeString = "ITF"
+                                    case AVMetadataObject.ObjectType.pdf417:
+                                        typeString = "PDF_417"
+                                    case AVMetadataObject.ObjectType.qr:
+                                        typeString = "QR_CODE"
+                                    case AVMetadataObject.ObjectType.upce:
+                                        typeString = "UPC_E"
+                                    default:
+                                        return
+                                }
+                                guard let stringValue = code.stringValue else { continue }
+                               let result = ["code": stringValue, "type": typeString]
+                                if allowedBarcodeTypes.count == 0 || allowedBarcodeTypes.contains(code.type) {
+                                    self?.channel.invokeMethod("onRecognizeQR", arguments: result)
+                                }
+                                
+                            }
+                        }
+
+                    })
+                } catch {
+                    let error = FlutterError(code: "unknown-error", message: "Unable to start scanning", details: nil)
+                    return result(error)
+                }
+            } else {
+                let error = FlutterError(code: "cameraPermission", message: "Permission denied to access the camera", details: nil)
+                result(error)
+            }
+        })
     
     func startScan(_ arguments: Array<Int>, _ result: @escaping FlutterResult) {
         // Check for allowed barcodes

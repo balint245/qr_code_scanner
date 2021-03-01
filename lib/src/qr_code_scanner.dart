@@ -124,13 +124,14 @@ class _QRViewState extends State<QRView> {
           ),
         ),
         Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Spacer(),
             FlatButton(
               onPressed: () {
                 final controller = QRViewController._(_channel, widget.key,
                     widget.onPermissionSet, widget.cameraFacing)
-                  .._startScan(
+                  .._startSingleScan(
                       widget.key, widget.overlay, widget.formatsAllowed);
                 // Initialize the controller for controlling the QRView
                 if (widget.onQRViewCreated != null) {
