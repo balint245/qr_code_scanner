@@ -28,6 +28,7 @@ class QRView(messenger: BinaryMessenger, id: Int, private val params: HashMap<St
     private var barcodeView: BarcodeView? = null
     private val channel: MethodChannel = MethodChannel(messenger, "net.touchcapture.qr.flutterqr/qrview_$id")
     private var permissionGranted: Boolean = false
+    private var startAutomatically: Boolean = false
 
     init {
         if (Shared.binding != null) {
@@ -77,6 +78,7 @@ class QRView(messenger: BinaryMessenger, id: Int, private val params: HashMap<St
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
         when(call.method) {
             "startScan" -> startScan(call.arguments as? List<Int>, result)
+            "startSingleScan" -> startSingleScan(call.arguments as? List<Int>, result)
             "stopScan" -> stopScan()
             "flipCamera" -> flipCamera(result)
             "toggleFlash" -> toggleFlash(result)
@@ -210,6 +212,34 @@ class QRView(messenger: BinaryMessenger, id: Int, private val params: HashMap<St
             }
         }
         return barcodeView
+    }
+
+    private fun startSingleScan(arguments: List<Int>?, result, MethodChannel.Result) {
+        val allowedBarcodeTypes = mutableListOf<BarcodeFormat>()
+        try {
+            arguments?.forEach {
+                allowedBarcodeTypes.add(BarcodeFormat.values()[it])
+            }
+        } catch (e: java.lang.Exception) {
+            result.error(null, null, null)
+        }
+
+        barcodeView?.decodeSingle(
+                object : BarcodeCallback {
+                    override fun barcodeResult(result: BarcodeResult) {
+                        if (allowedBarcodeTypes.size == 0 || allowedBarcodeTypes.contains(result.barcodeFormat)) {
+                            val code = mapOf(
+                                    "code" to result.text,
+                                    "type" to result.barcodeFormat.name,
+                                    "rawBytes" to result.rawBytes)
+                            channel.invokeMethod("onRecognizeQR", code)
+                        }
+
+                    }
+
+                    override fun possibleResultPoints(resultPoints: List<ResultPoint>) {}
+                }
+        )
     }
 
     private fun startScan(arguments: List<Int>?, result: MethodChannel.Result) {

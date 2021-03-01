@@ -103,14 +103,27 @@ class _QRViewState extends State<QRView> {
   }
 
   Widget _getPlatformQrViewWithOverlay() {
-    return Stack(
+    return Column(
       children: [
-        _getPlatformQrView(),
-        Container(
-          padding: widget.overlayMargin,
-          decoration: ShapeDecoration(
-            shape: widget.overlay,
+        Expanded(
+          flex: 5,
+          child: Stack(
+            children: [
+              _getPlatformQrView(),
+              Container(
+                padding: widget.overlayMargin,
+                decoration: ShapeDecoration(
+                  shape: widget.overlay,
+                ),
+              )
+            ],
           ),
+        ),
+        FlatButton(
+          onPressed: () {
+            print('kaka');
+          },
+          child: Text('Scan'),
         )
       ],
     );
