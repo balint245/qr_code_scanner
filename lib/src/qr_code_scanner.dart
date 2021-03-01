@@ -142,7 +142,7 @@ class _QRViewState extends State<QRView> {
                           widget.key,
                           widget.onPermissionSet,
                           widget.cameraFacing);
-                      await controller._startSingleScan(
+                      await controller._startScan(
                           widget.key, widget.overlay, widget.formatsAllowed);
 
                       // Initialize the controller for controlling the QRView
