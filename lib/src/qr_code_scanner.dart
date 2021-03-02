@@ -138,15 +138,13 @@ class _QRViewState extends State<QRView> {
                   onPressed: () {
                     // Start scan after creation of the view
                     var controller;
-                    if (!widget.singleScan) {
-                      controller = QRViewController._(_channel, widget.key,
-                          widget.onPermissionSet, widget.cameraFacing)
-                        .._startSingleScan(
-                            widget.key, widget.overlay, widget.formatsAllowed);
-                      // Initialize the controller for controlling the QRView
-                      if (widget.onQRViewCreated != null) {
-                        widget.onQRViewCreated(controller);
-                      }
+                    controller = QRViewController._(_channel, widget.key,
+                        widget.onPermissionSet, widget.cameraFacing)
+                      .._startSingleScan(
+                          widget.key, widget.overlay, widget.formatsAllowed);
+                    // Initialize the controller for controlling the QRView
+                    if (widget.onQRViewCreated != null) {
+                      widget.onQRViewCreated(controller);
                     }
                   },
                   shape: RoundedRectangleBorder(
@@ -300,6 +298,7 @@ class QRViewController {
   Future<void> _startSingleScan(GlobalKey key, QrScannerOverlayShape overlay,
       List<BarcodeFormat> barcodeFormats) async {
     // We need to update the dimension before the scan is started.
+    print('KAKA');
     try {
       await QRViewController.updateDimensions(key, _channel, overlay: overlay);
       return await _channel.invokeMethod('startSingleScan',
