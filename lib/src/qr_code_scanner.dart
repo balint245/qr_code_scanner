@@ -652,6 +652,7 @@ class QRViewController {
             final rawBytes = args['rawBytes'] as List<int>;
             final format = BarcodeTypesExtension.fromString(rawType);
             if (format != BarcodeFormat.unknown && _startScanTap) {
+              _startScanTap = false;
               final barcode = Barcode(code, format, rawBytes);
               _scanUpdateController.sink.add(barcode);
             } else {
